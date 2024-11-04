@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://bootswatch.com/5/solar/bootstrap.min.css">
+    <style>
+        .destacado{
+            background-color: yellow;
+        }
+    </style>
+</head>
+<body>
+    <div class="container p-4 my-5">
+        <div class="tareas row">
+            <div class="col-md-6">
+                <input type="text" placeholder="añadir tarea">
+                <button class="btn btn-primary">Añadir tarea</button>
+                <input type="search" class="buscador" placeholder="buscar"> <!--15. Se añade el buscador-->
+            </div>
+        </div>
+        <div class="lista row">
+            <div class="col-md-6">
+                <!-- Aqui va la lista ul y li -->
+            </div>
+        </div>
+    </div>
+
+
+    <script>
+        document.addEventListener("DOMContentLoaded",()=>{
+            //VARIABLES
+            let input=document.querySelector(".tareas input");
+            let btnAdd=document.querySelector(".tareas button");
+            let lista=document.querySelector(".lista");
+            let ul=crear("ul");//2. Creamos la lista ul
+            lista.append(ul);//3. Enlazamos ul al html, dentro del div que hemos creado para contener la lista de tareas 
+            buscador=document.querySelector(".tareas input:last-child");//16. Se selecciona el input buscar
+
+            //FUNCIONES
+            function $(elemento){   //Selccionar un elemento
+                return document.querySelector(elemento);
+            }
+
+            function $$(elementos){ //Seleccionar varios elementos
+                return document.querySelectorAll(elementos);
+            }
+
+            function crear(elemento){ //Crear elemento en el document
+                return document.createElement(elemento);
+            }
+
+            //6. Una vez probado el programa, nos damos cuenta de que la tarea, una vez insertada, no se borra del input automáticamente después de darle click, además la atención desaparece del input, por lo que si el usuario quiere escribir otra tarea, tiene que volverle a dar click al input para poder escribir, hay que crear una función para ello
+            function limpiar(elemento){
+                elemento.value="";//Para que el valor vuelva a estar vacio
+                elemento.focus();//Para que el puntero se centre en el input sin tener que darle el usuario
+            }
+
+            
+            //CÓDIGO
+
+            //HACER CLIK PARA AÑADIR TAREA
+            btnAdd.addEventListener("click",()=>{
+                let tarea=input.value.trim(); //1. Saca el valor del input y le quita los espacios (No saca el valor en tiempo real, para eso, target)
+                
+                //4. Cuando hace click, se almacena la tarea del input y se crea una lista debajo mostrando la tarea
+                //4. Cada vez que se haga click se creará un li, por eso creamos ul fuera del evento, para que solo haya 1
+                let li=crear("li");
+                li.textContent=tarea;
+                //5. Enlazamos li al html, denro del div que hemos creado para la lista de tareas y dentro de la lista (ul)
+                ul.append(li);//Con append, se inserta al final, con prepend antes
+
+                // 7.Limpieza con la función creada en el punto 6
+                limpiar(input);
+            })
+
+
+            //DARLE A ENTER PARA AÑADIR TAREA
+            //8. El programa sólo funciona al darle click al botón Añadir tarea, para que funcione con pulsando enter, hay que repetir lo anterior (con otro evento)
+
+            document.addEventListener("keydown",(e)=>{
+                if(e.key=="Enter"){//Si la tecla pulsada es enter
+                    if(input.value.trim()!=""){//Y si el campo input no esta vacío
+                        let tarea=input.value.trim();
+                        let li=crear("li");
+                        li.textContent=tarea;
+                        ul.append(li);
+                        limpiar(input);
+                    }
+                }
+            })
+
+
+            //DESTACAR TAREA
+            //9. Una vez tenemos la lista de tareas, queremos destacar una tarea haciendo click sobre ella
+            lista.addEventListener("click",(e)=>{
+                let elemento=e.target;//10. Sacar el elemento exacto en el que se hizo click dentro de la lista
+                elemento.classList.toggle("destacado");//11. Añadir la clase destacado al elemento para que pille los estilos. toggle es un método que agrega la clase "destacado" al elemento si aún no la tiene, o la quita si ya está presente
+            })
+
+            //HACER UN BUSCADOR
+            //13. Una vez hecho el programa, queremos añadir un buscador para que busque lo que se le introduzca dentro de la lista de tareas
+
+            //14. Lo primero es insertar el buscador en el documento html (Lo hacemos directamente, no de forma dinámica)
+
+            //17. Se crea el eento al buscador cuando se le meta un input
+            buscador.addEventListener("input",(e)=>{
+                let busqueda=e.target.value.trim();//18. Se saca el valor de lo que este escribiendo el usuario en el campo de búsqueda en tiempo real. Le quitamos los espacios para permitie que empiece por espacios y siga dando coincidencia
+                
+                let lista=document.querySelectorAll(".lista ul li") //19. Se selecciona el conjunto de li donde se va a buscar un li en concreto.
+
+                lista.forEach(element => {//20. Se recorre la lista de tareas (los li) en busca de alguna coincidencia con la busqueda
+                    if(element.textContent.includes(busqueda)){//21. Si el contenido del elemento de la lista incluye la busqueda, si hay una coincidencia
+                        element.style.display="block";
+                    }else{
+                        element.style.display="none";
+                    }
+                    
+                });
+            })
+
+
+
+            //BORRAR UNA TAREA
+            //13. Para borrar una tarea de la lista, hay que añadir una x a cada elemento, y pulsando sobre ella, se elimina dicho elemento
+
+        })
+    </script>
+</body>
+</html>
